@@ -21,7 +21,47 @@ hands[0].push(wall.pop());
 for(let i=0;i<4;i++) {
     hands[i].sort((a,b)=>a-b);
     console.log('Hand of ' + i);
-    for(let j=0;j<hands[i].length;j++)
-        console.log(humanReadable(hands[i][j]));
+    console.log(hands[i].map(humanReadable).join(', '));
     console.log('\n');
+}
+
+function checkFourCombs(count) {
+    let mn=-1;
+    for(let i=0;i<46;i++) {
+        if(count[i]>0) {
+            mn=i;
+            break;
+        }
+        if(count[i]<0) {
+            return false;
+        }
+    }
+    if(mn==-1) return true;
+    count[mn]-=3;
+    let pong=checkFourCombs(count);
+    count[mn]+=3;
+    count[mn]-=1;
+    count[mn+1]-=1;
+    count[mn+2]-=1;
+    let chow=checkFourCombs(count);
+    count[mn]+=1;
+    count[mn+1]+=1;
+    count[mn+2]+=1;
+    return pong || chow;
+}
+
+function isWinning(hand) {
+    let count=Array(50).fill(0);
+    for(let i=0;i<hand.length;i++)
+        count[hand[i]]++;
+    for(let i=0;i<46;i++) {
+        if(count[i]>=2) {
+            count[i]-=2;
+            if(checkFourCombs(count)) {
+                return true;
+            }
+            count[i]+=2;
+        }
+    }
+    return false;
 }
