@@ -11,3 +11,8 @@ for(let s=0;s<3;s++)
     for(let n=1;n<=9;n++) possible.push(s*10+n);
 possible.push(...Object.keys(HONORS).map(Number));
 
+let wall=Array(4).fill(possible).flat();
+for(let j=wall.length-1;j>=0;j--) {
+    let i=Math.floor(Math.random()*(j+1));
+    [wall[i],wall[j]]=[wall[j],wall[i]]
+}
