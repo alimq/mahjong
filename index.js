@@ -16,3 +16,12 @@ for(let j=wall.length-1;j>=0;j--) {
     let i=Math.floor(Math.random()*(j+1));
     [wall[i],wall[j]]=[wall[j],wall[i]]
 }
+let hands=Array.from({length: 4}, ()=>wall.splice(0,13));
+hands[0].push(wall.pop());
+for(let i=0;i<4;i++) {
+    hands[i].sort((a,b)=>a-b);
+    console.log('Hand of ' + i);
+    for(let j=0;j<hands[i].length;j++)
+        console.log(humanReadable(hands[i][j]));
+    console.log('\n');
+}
