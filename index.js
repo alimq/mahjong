@@ -1,3 +1,5 @@
+import readline from 'node:readline/promises';
+
 const SUITS = ['Dots','Bamboo','Chars'];
 const HONORS = {31:'E',33:'S',35:'W',37:'N',41:'R',43:'G',45:'Wh'};
 
@@ -20,20 +22,19 @@ let hands=Array.from({length: 4}, ()=>wall.splice(0,13));
 hands[0].push(wall.pop());
 for(let i=0;i<4;i++) {
     hands[i].sort((a,b)=>a-b);
-    console.log('Hand of ' + i);
-    console.log(hands[i].map(humanReadable).join(', '));
-    console.log('\n');
 }
 
 function checkFourCombs(count) {
     let mn=-1;
+    for(let i=0;i<46; i++) {
+        if(count[i]<0) {
+            return false;
+        }
+    }
     for(let i=0;i<46;i++) {
         if(count[i]>0) {
             mn=i;
             break;
-        }
-        if(count[i]<0) {
-            return false;
         }
     }
     if(mn==-1) return true;
@@ -65,3 +66,35 @@ function isWinning(hand) {
     }
     return false;
 }
+let player=Math.floor(Math.random()*4);
+console.log(`You are player ${player}`);
+let iter=0,i=0,winner=0;
+const rl=readline.createInterface({input: process.stdin,output:process.stdout});
+while(wall.length>0) {
+    if(iter>0) {
+        hands[i].push(wall.pop());
+    }
+    if(isWinning(hands[i])) {
+        console.log("Player " + i + " won!");
+        console.log('Hand of ' + i);
+        console.log(hands[i].map(humanReadable).join(', '));
+        console.log('\n');
+        winner=1;
+        break;
+    }
+    if(i!=player) {
+        hands[i].splice(Math.floor(Math.random()*hands[i].length),1);
+    }   else {
+        console.log('Your hand:');
+        console.log(hands[i].map((t,k)=>`${k}:${humanReadable(t)}`).join(', '));
+        console.log('\n');
+        const answer = await rl.question('Input the index of the tile to remove');
+        hands[i].splice(Number(answer),1);
+    }
+    hands[i].sort((a,b)=>a-b);
+    iter+=1;
+    i=(i+1)%4;
+}
+rl.close();
+if(!winner)
+    console.log('Tie! The wall is empty.');
