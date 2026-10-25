@@ -1,11 +1,11 @@
-import readline from 'node:readline/promises';
-
 const SUITS = ['Dots','Bamboo','Chars'];
+const SUITS_D = ['Pin','Sou','Man'];
 const HONORS = {31:'E',33:'S',35:'W',37:'N',41:'R',43:'G',45:'Wh'};
+const HONORS_D = {31:'Ton',33:'Nan',35:'Shaa',37:'Pei',41:'Chun',43:'Hatsu',45:'Haku'};
 
 function humanReadable(x) {
-    if(x<30) return `${x%10} of ${SUITS[Math.floor(x/10)]}`;
-    return HONORS[x] ?? '?';
+    if(x<30) return `tiles/${SUITS_D[Math.floor(x/10)]}${x%10}.svg`;
+    return `tiles/${HONORS_D[x]}.svg` ?? '';
 }
 
 const possible = [];
@@ -69,7 +69,6 @@ function isWinning(hand) {
 let player=Math.floor(Math.random()*4);
 console.log(`You are player ${player}`);
 let iter=0,i=0,winner=0;
-const rl=readline.createInterface({input: process.stdin,output:process.stdout});
 
 let msgTimer=null;
 function displayHand(msg,hand) {
@@ -79,7 +78,7 @@ function displayHand(msg,hand) {
         let node=document.createElement('div');
         node.dataset.index=j;
         node.className='tile';
-        node.style.backgroundImage=`url(tiles/${code}.png)`;
+        node.style.backgroundImage=`url(${humanReadable(hand[j])})`;
         handEl.append(node);
     }
     let msgEl=document.querySelector('#msgEl');
@@ -121,6 +120,5 @@ while(wall.length>0) {
     iter+=1;
     i=(i+1)%4;
 }
-rl.close();
 if(!winner)
-    console.log(`Tie! The wall is empty. You have made ${iter} turns`);
+    displayHand(`Tie! The wall is empty. You have made ${iter/4} turns`,[]);
