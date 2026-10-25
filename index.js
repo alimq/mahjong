@@ -85,10 +85,11 @@ while(wall.length>0) {
     if(i!=player) {
         hands[i].splice(Math.floor(Math.random()*hands[i].length),1);
     }   else {
+        hands[i].sort((a,b)=>a-b);
         console.log('Your hand:');
         console.log(hands[i].map((t,k)=>`${k}:${humanReadable(t)}`).join(', '));
         console.log('\n');
-        const answer = await rl.question('Input the index of the tile to remove');
+        const answer = await rl.question('Input the index of the tile to remove\n');
         hands[i].splice(Number(answer),1);
     }
     hands[i].sort((a,b)=>a-b);
@@ -97,4 +98,4 @@ while(wall.length>0) {
 }
 rl.close();
 if(!winner)
-    console.log('Tie! The wall is empty.');
+    console.log(`Tie! The wall is empty. You have made ${iter} turns`);
