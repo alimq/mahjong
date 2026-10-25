@@ -70,15 +70,42 @@ let player=Math.floor(Math.random()*4);
 console.log(`You are player ${player}`);
 let iter=0,i=0,winner=0;
 const rl=readline.createInterface({input: process.stdin,output:process.stdout});
+
+let msgTimer=null;
+function displayHand(msg,hand) {
+    let handEl=document.querySelector('#handEl');
+    handEl.replaceChildren();
+    for(let j=0;j<hand.length;j++) {
+        let node=document.createElement('div');
+        node.dataset.index=j;
+        node.className='tile';
+        node.style.backgroundImage=`url(tiles/${code}.png)`;
+        handEl.append(node);
+    }
+    let msgEl=document.querySelector('#msgEl');
+    clearTimeout(msgTimer);
+    msgEl.textContent=msg;
+    msgTimer=setTimeout(()=>msgEl.textContent='',5000);
+}
+let pendingResolve=null;
+function waitForDiscard() {
+    return new Promise(resolve=>{pendingResolve=resolve;});
+}
+let handEl=document.querySelector('#handEl');
+handEl.addEventListener('click',e=>{
+    const tile=e.target.closest('[data-index]');
+    if(!tile || !pendingResolve) return;
+    const resolve=pendingResolve;
+    pendingResolve=null;
+    resolve(Number(tile.dataset.index));
+});
+
 while(wall.length>0) {
     if(iter>0) {
         hands[i].push(wall.pop());
     }
     if(isWinning(hands[i])) {
-        console.log("Player " + i + " won!");
-        console.log('Hand of ' + i);
-        console.log(hands[i].map(humanReadable).join(', '));
-        console.log('\n');
+        displayHand("Player " + i + " won!\nHand of " + i,hands[i]);
         winner=1;
         break;
     }
@@ -86,10 +113,8 @@ while(wall.length>0) {
         hands[i].splice(Math.floor(Math.random()*hands[i].length),1);
     }   else {
         hands[i].sort((a,b)=>a-b);
-        console.log('Your hand:');
-        console.log(hands[i].map((t,k)=>`${k}:${humanReadable(t)}`).join(', '));
-        console.log('\n');
-        const answer = await rl.question('Input the index of the tile to remove\n');
+        displayHand('Your hand:',hands[i]);
+        const answer=await waitForDiscard();
         hands[i].splice(Number(answer),1);
     }
     hands[i].sort((a,b)=>a-b);
