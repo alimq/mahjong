@@ -99,6 +99,32 @@ handEl.addEventListener('click',e=>{
     resolve(Number(tile.dataset.index));
 });
 
+function hasPong() {
+
+}
+
+function hasKong() {
+
+}
+
+function hasChow() {
+
+}
+
+function findMeld(tile) {
+    for(let d=1;d<4;d++) {
+        let j=(i+d)%4;
+        hands[j].push(tile);
+        if(hasPong(j)) {
+
+        }
+        if(hasKong(j)) {
+            
+        }
+        hands[j].pop();
+    }
+}
+
 while(wall.length>0) {
     if(iter>0) {
         hands[i].push(wall.pop());
@@ -117,6 +143,9 @@ while(wall.length>0) {
         hands[i].splice(Number(answer),1);
     }
     hands[i].sort((a,b)=>a-b);
+
+    findMeld();
+
     iter+=1;
     i=(i+1)%4;
 }
